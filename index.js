@@ -95,9 +95,6 @@ function promiseReport (scan, options) {
     }
     return
   }
-  if (options.web) {
-    return openSite(url);
-  }
 
   return rp({
       url: url,
@@ -109,14 +106,18 @@ function promiseReport (scan, options) {
   )
 }
 
-function printReportsCsv (scoresList, url) {
+function printReportsCsv (scoresList, url, options) {
   // print('[{modifier:>4}] {reason}'.format(modifier=score[0], reason=score[1].replace('"','\\"')))
 
+  console.log("\nScore Description\n");
+
   scoresList.map(function (score) {
-    console.log(sprintf("%4f %s", score.score_modifier, score.score_description))
+    console.log(sprintf("%5f %s", score.score_modifier, score.score_description))
   })
 
-  console.log("# full report at: ", url)
+  var fullReportUrl = "https://observatory.mozilla.org/analyze.html?host=" + options.site;
+
+  console.log(sprintf("\n## full report at: \n\n  %s\n", fullReportUrl))
 }
 
 function printReport(reportData, url, options) {
@@ -156,7 +157,7 @@ function printReport(reportData, url, options) {
   scoresList.sort(sortByScore).map(invertScore)
 
   if (options.csv) {
-    printReportsCsv(scoresList, url);
+    printReportsCsv(scoresList, url, options);
   }
   else {
     console.log(scores)
@@ -196,9 +197,15 @@ program
   .option("--tls", "do tls checks instead [TODO]")
 
   .action(function (site, options) {
+    options.site = site; // stuff it in.
+
     if (options.tls) {
       throw new Error ("tls, attempts not yet implemented")
     };
+
+    if (options.web) {
+      return openSite("https://observatory.mozilla.org/analyze.html?host=" + site)
+    }
 
     promiseScan(site, options).then(
     function (reportId) {promiseReport(reportId, options)}).

@@ -62,3 +62,19 @@ $ observatory --help
 ```
 
 
+## Example Results
+
+```
+$ observatory some.site --csv
+
+Score Description
+
+   25 Content Security Policy (CSP) header not implemented
+   10 HTTP Strict Transport Security (HSTS) header set to less than six months (15768000)
+    5 Contribute.json file missing from root of website
+
+## full report at:
+
+  https://observatory.mozilla.org/analyze.html?host=some.site
+
+```
