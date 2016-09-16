@@ -4,6 +4,11 @@
 
 Observatory by Mozilla is a project designed to help developers, system administrators, and security professionals configure their sites safely and securely.
 
+## See Observatory in Action!
+
+- <https://observatory.mozilla.org/>
+- [FAQ](https://observatory.mozilla.org/faq.html)
+
 ## install
 
 ```
