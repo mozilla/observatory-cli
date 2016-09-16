@@ -1,13 +1,13 @@
-# Observatory CLI
+# Observatory by Mozilla CLI Client
 
-## about
+## Score your site on its HTTPS practices
 
-Mozilla HTTP Observatory rates websites for best practices around HTTPS.
+Observatory by Mozilla is a project designed to help developers, system administrators, and security professionals configure their sites safely and securely.
 
 ## install
 
 ```
-npm install -g observatory-cli
+$ npm install -g observatory-cli
 ```
 
 ## usage
@@ -78,3 +78,9 @@ Score Description
   https://observatory.mozilla.org/analyze.html?host=some.site
 
 ```
+
+
+## Related projects
+
+- [HTTP Observatory](https://github.com/mozilla/http-observatory) by April King
+- [Python observatory-cli](https://github.com/mozilla/http-observatory-cli) by April King
