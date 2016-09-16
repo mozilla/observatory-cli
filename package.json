@@ -1,0 +1,21 @@
+{
+  "name": "observatory-cli",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "observatory": "./index.js"
+  },
+  "author": "Gregg Lind <glind@mozilla.com>",
+  "license": "MPL-2",
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "commander": "^2.9.0",
+    "request": "^2.74.0",
+    "request-promise": "^4.1.1",
+    "timeout-as-promise": "^1.0.0"
+  }
+}
