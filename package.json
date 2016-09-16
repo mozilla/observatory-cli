@@ -1,21 +1,34 @@
 {
   "name": "observatory-cli",
+  "description": "Command line client for Mozilla HTTP observatory service",
   "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "author": "Gregg Lind <glind@mozilla.com>",
   "bin": {
     "observatory": "./index.js"
   },
-  "author": "Gregg Lind <glind@mozilla.com>",
-  "license": "MPL-2",
+  "bugs": {
+    "url": "https://github.com/gregglind/observatory-cli/issues"
+  },
   "dependencies": {
     "chalk": "^1.1.3",
     "commander": "^2.9.0",
     "request": "^2.74.0",
     "request-promise": "^4.1.1",
     "timeout-as-promise": "^1.0.0"
+  },
+  "homepage": "https://github.com/gregglind/observatory-cli#readme",
+  "keywords": [
+    "https",
+    "mozilla",
+    "security"
+  ],
+  "license": "MPL-2",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gregglind/observatory-cli.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
