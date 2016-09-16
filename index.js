@@ -174,7 +174,7 @@ function preprocess (args) {
 var program = require('commander');
 
 program
-  .version('1.0.0')
+  .version('0.2.0')
 
 program
   //.command('check <site>')
