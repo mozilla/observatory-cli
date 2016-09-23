@@ -219,7 +219,12 @@ function formatAnswersCsv (scores, url, scan, options) {
 
 
   scoresList.map(function (score) {
-    console.log(sprintf("%5f %s %s", score.score_modifier, f.error(padright(score.name, longest+1)), score.score_description))
+    var points = score.score_modifier;
+    var fmt = f.code;
+    if (points > 0) { fmt = f.info }
+    if (points < 0) { fmt = f.error }
+
+    console.log(sprintf("%5f %s %s", score.score_modifier, fmt(padright(score.name, longest+1)), score.score_description))
   })
 
   var fullReportUrl = "https://observatory.mozilla.org/analyze.html?host=" + options.site;
