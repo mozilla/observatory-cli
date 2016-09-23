@@ -7,10 +7,8 @@
 
 var chalk = require("chalk");
 var program = require("commander");
-var request = require("request");
 var rp = require("request-promise");
 var delay = require("timeout-as-promise");
-var merge = require("merge");
 var sprintf=require("sprintf-js").sprintf;
 var util = require("util");
 
@@ -307,7 +305,7 @@ function formatAnswer(reportData, url, scan, options) {
 
   // rescore
   var newScore = 100;
-  for (var k in scores) {
+  for (k in scores) {
     newScore += scores[k].score_modifier;
   }
 
@@ -362,7 +360,7 @@ class Observatory {
       logger.info("go client: ", f.link("https://github.com/mozilla/tls-observatory"))
       logger.info("comment:    %s", f.link("https://github.com/mozilla/observatory-cli/issues/5"))
       return
-    };
+    }
 
     // require site for everything else
     logger.error(f.error("no <site> given"));
@@ -371,8 +369,6 @@ class Observatory {
 }
 
 let O = new Observatory();
-
-var program = require("commander");
 
 program
   .version(require("./package.json").version)

@@ -1,7 +1,7 @@
 {
   "name": "observatory-cli",
   "description": "Command line client for Mozilla HTTP observatory service",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "author": "Gregg Lind <glind@mozilla.com>",
   "bin": {
     "observatory": "./index.js"
@@ -13,15 +13,15 @@
     "chalk": "^1.1.3",
     "clim": "^1.1.1",
     "commander": "^2.9.0",
-    "merge": "^1.2.0",
     "request": "^2.74.0",
     "request-promise": "^4.1.1",
     "sprintf-js": "^1.0.3",
     "timeout-as-promise": "^1.0.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "mocha": "^3.0.2"
+    "depcheck": "^0.6.4",
+    "eslint": "^3.5.0",
+    "fixpack": "^2.3.1"
   },
   "homepage": "https://github.com/mozilla/observatory-cli#readme",
   "keywords": [
@@ -36,6 +36,7 @@
     "url": "git+https://github.com/mozilla/observatory-cli.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepublish": "npm shrinkwrap",
+    "test": "eslint '**.js' && depcheck && fixpack && echo OK"
   }
 }

@@ -1,0 +1,12 @@
+extends: eslint:recommended
+
+env:
+  node: true
+  es6: true
+  browser: true
+
+rules:
+  comma-dangle: off
+  no-console: off
+  no-unused-vars: [error, { vars: all, args: none }]
+
