@@ -1,7 +1,7 @@
 {
   "name": "observatory-cli",
   "description": "Command line client for Mozilla HTTP observatory service",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "author": "Gregg Lind <glind@mozilla.com>",
   "bin": {
     "observatory": "./index.js"
@@ -29,7 +29,7 @@
     "mozilla",
     "security"
   ],
-  "license": "MPL-2",
+  "license": "MPL-2.0",
   "main": "index.js",
   "repository": {
     "type": "git",
