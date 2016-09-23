@@ -174,7 +174,13 @@ function validateGrade (val) {
 
 function openSite (url) {
   logger.log(f.link(url));
+}
 
+function filterNegativeScores(scores) {
+  function isNegative (k) {
+    return scores[k].score_modifier < 0;
+  }
+  return Object.keys(scores).filter(isNegative)
 }
 
 function promiseReport (scan, options) {
@@ -242,15 +248,18 @@ function handleNagiosMode(options, scan, scores) {
   }
   var codeName = nagiosExitCodes[options.nagios];
 
+  var negatives = filterNegativeScores(scores);
+
   function OK () {
     console.log("OK")
     process.exit(0)
   }
 
   function FAIL () {
-    console.log("%s %j", codeName, Object.keys(scores))
+    console.log("%s %j", codeName, negatives)
     process.exit(codeName)
   }
+
 
   if (options.minGrade || (options.minScore !== undefined)) {
     try {
@@ -261,7 +270,7 @@ function handleNagiosMode(options, scan, scores) {
     }
     return
   } else {
-    if (Object.keys(scores).length) {
+    if (negatives.length) {
       FAIL()
     } else {
       OK()
@@ -441,7 +450,7 @@ function newHelp () {
     f.header("Nagios Mode" ) +" " + f.code("(--nagios)") +
     "\n" +
     "  - if `--min-score` and/or `--min-grade`, use those.\n" +
-    "  - else *any* failing rules fail the check.\n" +
+    "  - else *any* negative rules fail the check.\n" +
     "  - exits with integer `failcode`.\n"
 
   return out;

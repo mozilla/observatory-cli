@@ -9,15 +9,22 @@ Observatory by Mozilla is a project designed to help developers, system administ
 - <https://observatory.mozilla.org/>
 - [FAQ](https://observatory.mozilla.org/faq.html)
 
-## install
+### Example site report, with additional options
+
+![Screenshot of ssllabs.com report, showing colors](report.png)
+
+The [full report url](https://observatory.mozilla.org/analyze.html?host=ssllabs.com) has suggestions to **repair** each of these issues.
+
+
+## Install
 
 ```
 $ npm install -g observatory-cli
 ```
 
-## usage
+## Usage
 
-1.  **Scan a site** for `https` best practices
+1.  **Scan a site** for `https` best practices.
 
     ```
     # json!
@@ -31,7 +38,7 @@ $ npm install -g observatory-cli
 
     ```
 
-2.  **Test a site** as part of a Continuous Integration pipeline
+2.  **Test a site** as part of a Continuous Integration pipeline.
 
     Script will FAIL unless the grade is AT LEAST `B+`
 
@@ -46,13 +53,15 @@ $ npm install -g observatory-cli
     ```
 
 
-3.  **Show the URL** for report
+3.  **Show the URL** for the web report.
 
     ```
     $ observatory some.site.name --format=url
     ```
 
-4.  **nagios** monitoring plugin
+4.  **nagios** monitoring plugin mode.
+
+    For `--nagios <failcode>`, `failcode` will be the exit code if the test fails.
 
     `--min-score`, `--min-grade`, `--zero`, `--skip` aftect the test.
 
@@ -62,7 +71,29 @@ $ npm install -g observatory-cli
     ```
 
     If neither `--min-score` nor `--min-grade` is specified, any
-    non-zero scores fail the test.
+    negative scores fail the test.
+
+    ```
+    # '2' means 'critical.'  Exits '2'
+
+    $ observatory ssllabs.com --nagios 2
+    CRITICAL ["redirection"]
+    ```
+
+    We can `--skip` the failing rule, and affect the score.
+
+    ```
+    $ observatory ssllabs.com --nagios     2 --skip redirection
+    observatory [INFO] modfiying score, because of --skip.  was: 100, now: 105
+    OK
+    ```
+
+    Quiet output with `-q`.
+
+    ```
+    $ observatory ssllabs.com --nagios     2 --skip redirection -q
+    OK
+    ```
 
 ## Help
 
@@ -106,11 +137,11 @@ Nagios Mode (--nagios)
 ```
 
 
-## Example Results
+## Example Report, Text Version
 
-Added on:
+Report, with options:
 
-* `-z` to show '0' things
+* `-z` to show '0' rules (all rules)
 * `--skip` to skip a rule (affecting SCORE, but not GRADE)
 
 ```
@@ -139,7 +170,6 @@ Grade: C+
 Full Report Url: https://observatory.mozilla.org/analyze.html?host=some.site
 
 ```
-
 
 ## Related projects
 
