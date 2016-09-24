@@ -154,7 +154,7 @@ class Scanner {
 /** related to grades */
 var grades = ["F"];
 "DCBA".split("").forEach(function (g) {
-  ["-"," ","+"].forEach(function(mark) {
+  ["-","","+"].forEach(function(mark) {
     grades.push(g+mark);
   })
 })

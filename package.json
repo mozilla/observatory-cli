@@ -1,7 +1,7 @@
 {
   "name": "observatory-cli",
   "description": "Command line client for Mozilla HTTP observatory service",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "author": "Gregg Lind <glind@mozilla.com>",
   "bin": {
     "observatory": "./index.js"
