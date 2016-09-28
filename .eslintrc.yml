@@ -10,10 +10,11 @@ root: true
 
 rules:
   comma-dangle: off
+  curly: warn
   eol-last: error
   eqeqeq: error
   handle-callback-err: error
-  indent: [error, 2]
+  indent: [error, 2, {SwitchCase: 1}]
   no-console: off
   no-multi-spaces: error
   no-unused-vars: [error, {vars: all, args: none}]
