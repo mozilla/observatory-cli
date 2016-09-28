@@ -35,11 +35,11 @@ clim.logWrite = function(level, prefixes, msg) {
   level = (f[level.toLowerCase()] || function(p) {return p;})(level);
   var line = util.format("%s [%s] %s", pfx, level, msg);
   switch (level) {
-    case "ERROR":
-      process.stderr.write(line + "\n");
-      break;
-    default:
-      process.stdout.write(line + "\n");
+  case "ERROR":
+    process.stderr.write(line + "\n");
+    break;
+  default:
+    process.stdout.write(line + "\n");
   }
 };
 
@@ -125,13 +125,13 @@ class Scanner {
       }
     });
     return rp.post({
-        url: url,
-        json: true,
-        simple: true,
-        formData: qargs
-      }).then(
+      url: url,
+      json: true,
+      simple: true,
+      formData: qargs
+    }).then(
       function(scan) {
-        if (options.rescan && (scan.error == "rescan-attempt-too-soon")) {
+        if (options.rescan && (scan.error === "rescan-attempt-too-soon")) {
           logger.warn("Rescan attempt is sooner than the allowed cooldown period. Returning cached results instead.");
           options.rescan = false;
           return that.promiseScan(site, options);
@@ -187,12 +187,12 @@ function promiseReport(scan, options) {
   var url = API_URL + "getScanResults?scan=" + scan.scan_id;
 
   return rp({
-      url: url,
-      json: true,
-      simple: true
-    }).then(function(reportData) {
-      formatAnswer(reportData, url, scan, options);
-    }
+    url: url,
+    json: true,
+    simple: true
+  }).then(function(reportData) {
+    formatAnswer(reportData, url, scan, options);
+  }
   );
 }
 
@@ -284,17 +284,17 @@ function handleNagiosMode(options, scan, scores) {
 
 function handleExpectedScore(options, scan) {
   // side cases
-  var mingrade = options.minGrade,
-      minscore = options.minScore;
+  var mingrade = options.minGrade;
+  var minscore = options.minScore;
 
   if (mingrade) {
     if (!gradeCompare(scan.grade, mingrade)) {
-      throw new Error(sprintf("bad grade.  wanted %s, got %s",  mingrade, scan.grade));
+      throw new Error(sprintf("bad grade.  wanted %s, got %s", mingrade, scan.grade));
     }
   }
   if (minscore !== undefined) {
     if (scan.score < minscore) {
-      throw new Error(sprintf("bad score.  wanted %s, got %s",  minscore, scan.score));
+      throw new Error(sprintf("bad score.  wanted %s, got %s", minscore, scan.score));
     }
   }
   return;
@@ -307,7 +307,7 @@ function formatAnswer(reportData, url, scan, options) {
   for (var k in reportData) {
     var v = reportData[k];
     // --zero
-    if (v.score_modifier != 0 || options.zero) {
+    if (v.score_modifier !== 0 || options.zero) {
       // --skip
       if (k in options.skip) { continue; }
 
@@ -327,7 +327,7 @@ function formatAnswer(reportData, url, scan, options) {
     scan.score = newScore;
   }
 
-  if (options.nagios != undefined) {
+  if (options.nagios !== undefined) {
     // nagios has
     try {
       handleNagiosMode(options, scan, scores);
@@ -352,10 +352,10 @@ function formatAnswer(reportData, url, scan, options) {
 
 var passedOn = [];
 function preprocess(args) {
-  var dashed = false,
-    out = [];
+  var dashed = false;
+  var out = [];
   args.forEach(function(a) {
-    if (a == "--") {
+    if (a === "--") {
       dashed = true;
       return;
     }
@@ -415,7 +415,7 @@ program
     if (options.tls) {
       return O.handleNoSite(options);
     }
-    if (options.format == "url") {
+    if (options.format === "url") {
       return openSite(util.format("https://observatory.mozilla.org/analyze.html?host=%s", site));
     }
 
