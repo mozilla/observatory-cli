@@ -1,0 +1,23 @@
+env:
+  browser: true
+  es6: true
+  node: true
+
+extends:
+  - eslint:recommended
+
+root: true
+
+rules:
+  comma-dangle: off
+  curly: warn
+  eol-last: error
+  eqeqeq: error
+  handle-callback-err: error
+  indent: [error, 2, {SwitchCase: 1}]
+  no-console: off
+  no-multi-spaces: error
+  no-unused-vars: [error, {vars: all, args: none}]
+  one-var: [error, never]
+  quotes: [error, double]
+  semi: [error, always]

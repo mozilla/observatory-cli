@@ -21,19 +21,28 @@ var clim = require("clim");
 var QUIET = false;
 var hasSite = false;
 
-function padright(s, l) {
-  if (s.length >= l) return s;
-  return s + Array(l).fill(" ").join("").slice(s.length);
+function padright(s, len) {
+  if (s.length >= len) {
+    return s;
+  }
+  return s + Array(len).fill(" ").join("").slice(s.length);
 }
 
 clim.logWrite = function(level, prefixes, msg) {
-  if (QUIET) return;
+  if (QUIET) {
+    return;
+  }
 
   var pfx = "";
-  if (prefixes.length > 0) pfx = prefixes.join(" ");
+  if (prefixes.length > 0) {
+    pfx = prefixes.join(" ");
+  }
 
-  level = (f[level.toLowerCase()] || function(p) {return p;})(level);
+  level = (f[level.toLowerCase()] || function(p) {
+    return p;
+  })(level);
   var line = util.format("%s [%s] %s", pfx, level, msg);
+
   switch (level) {
     case "ERROR":
       process.stderr.write(line + "\n");
@@ -47,12 +56,12 @@ var logger = clim(chalk.grey("observatory"));
 
 var f = {
   error: chalk.red,
-  link:  chalk.underline.blue,
-  info:  chalk.blue,
-  log:   chalk.blue,
-  warn:  chalk.red,
-  bold:  chalk.bold,
-  code:  chalk.grey,
+  link: chalk.underline.blue,
+  info: chalk.blue,
+  log: chalk.blue,
+  warn: chalk.red,
+  bold: chalk.bold,
+  code: chalk.grey,
   header: chalk.bold.blue
 };
 
@@ -62,13 +71,17 @@ function collect(val, O) {
 }
 
 function helpAnywhere(rawArgs) {
-  return rawArgs.filter(function(x) { return /-h|--help/.exec(x);}).length;
+  return rawArgs.filter(function(x) {
+    return /-h|--help/.exec(x);
+  }).length;
 }
 
 var FORMATS = {
   "json": {
     "description": "json of the report",
-    "action": function(scores) { console.log(JSON.stringify(scores, null, 2));}
+    "action": function(scores) {
+      console.log(JSON.stringify(scores, null, 2));
+    }
   },
   "report": {
     "description": "plain-text tabular format",
@@ -87,8 +100,9 @@ var FORMATS = {
 
 function validateFormatChoice(given) {
   given = given.toLowerCase();
-  if (given in FORMATS) return given;
-  else {
+  if (given in FORMATS) {
+    return given;
+  } else {
     logger.error("not a valid format choice: %s.  Allowed: ",
       f.error(given),
       f.code(Object.keys(FORMATS).join("|")));
@@ -97,7 +111,9 @@ function validateFormatChoice(given) {
 }
 
 function longestInList(L) {
-  return Math.max.apply(null, L.map(function(x) {return x.length;}));
+  return Math.max.apply(null, L.map(function(x) {
+    return x.length;
+  }));
 }
 
 /* functions for retrieving reports */
@@ -125,13 +141,13 @@ class Scanner {
       }
     });
     return rp.post({
-        url: url,
-        json: true,
-        simple: true,
-        formData: qargs
-      }).then(
+      url: url,
+      json: true,
+      simple: true,
+      formData: qargs
+    }).then(
       function(scan) {
-        if (options.rescan && (scan.error == "rescan-attempt-too-soon")) {
+        if (options.rescan && (scan.error === "rescan-attempt-too-soon")) {
           logger.warn("Rescan attempt is sooner than the allowed cooldown period. Returning cached results instead.");
           options.rescan = false;
           return that.promiseScan(site, options);
@@ -144,7 +160,9 @@ class Scanner {
           return scan;
         } else {
           logger.warn(sprintf("retrying in 1 second (attempt %s/%s)", that.attempts, that.allowed));
-          return delay(1000).then(function() {return that.promiseScan(site, options);});
+          return delay(1000).then(function() {
+            return that.promiseScan(site, options);
+          });
         }
       }
     );
@@ -154,7 +172,7 @@ class Scanner {
 /** related to grades */
 var grades = ["F"];
 "DCBA".split("").forEach(function(g) {
-  ["-","","+"].forEach(function(mark) {
+  ["-", "", "+"].forEach(function(mark) {
     grades.push(g + mark);
   });
 });
@@ -187,13 +205,12 @@ function promiseReport(scan, options) {
   var url = API_URL + "getScanResults?scan=" + scan.scan_id;
 
   return rp({
-      url: url,
-      json: true,
-      simple: true
-    }).then(function(reportData) {
-      formatAnswer(reportData, url, scan, options);
-    }
-  );
+    url: url,
+    json: true,
+    simple: true
+  }).then(function(reportData) {
+    formatAnswer(reportData, url, scan, options);
+  });
 }
 
 function formatAnswersCsv(scores, url, scan, options) {
@@ -284,17 +301,17 @@ function handleNagiosMode(options, scan, scores) {
 
 function handleExpectedScore(options, scan) {
   // side cases
-  var mingrade = options.minGrade,
-      minscore = options.minScore;
+  var mingrade = options.minGrade;
+  var minscore = options.minScore;
 
   if (mingrade) {
     if (!gradeCompare(scan.grade, mingrade)) {
-      throw new Error(sprintf("bad grade.  wanted %s, got %s",  mingrade, scan.grade));
+      throw new Error(sprintf("bad grade.  wanted %s, got %s", mingrade, scan.grade));
     }
   }
   if (minscore !== undefined) {
     if (scan.score < minscore) {
-      throw new Error(sprintf("bad score.  wanted %s, got %s",  minscore, scan.score));
+      throw new Error(sprintf("bad score.  wanted %s, got %s", minscore, scan.score));
     }
   }
   return;
@@ -307,7 +324,7 @@ function formatAnswer(reportData, url, scan, options) {
   for (var k in reportData) {
     var v = reportData[k];
     // --zero
-    if (v.score_modifier != 0 || options.zero) {
+    if (v.score_modifier !== 0 || options.zero) {
       // --skip
       if (k in options.skip) { continue; }
 
@@ -327,7 +344,7 @@ function formatAnswer(reportData, url, scan, options) {
     scan.score = newScore;
   }
 
-  if (options.nagios != undefined) {
+  if (options.nagios !== undefined) {
     // nagios has
     try {
       handleNagiosMode(options, scan, scores);
@@ -352,15 +369,18 @@ function formatAnswer(reportData, url, scan, options) {
 
 var passedOn = [];
 function preprocess(args) {
-  var dashed = false,
-    out = [];
+  var dashed = false;
+  var out = [];
   args.forEach(function(a) {
-    if (a == "--") {
+    if (a === "--") {
       dashed = true;
       return;
     }
-    if (dashed) passedOn.push(a);
-    else out.push(a);
+    if (dashed) {
+      passedOn.push(a);
+    } else {
+      out.push(a);
+    }
   });
   return out;
 }
@@ -408,14 +428,16 @@ program
     // everything here has a site
     hasSite = true;
 
-    if (helpAnywhere(options.rawArgs)) program.help();
+    if (helpAnywhere(options.rawArgs)) {
+      program.help();
+    }
 
     options.site = site; // stuff it in.
 
     if (options.tls) {
       return O.handleNoSite(options);
     }
-    if (options.format == "url") {
+    if (options.format === "url") {
       return openSite(util.format("https://observatory.mozilla.org/analyze.html?host=%s", site));
     }
 
@@ -425,14 +447,15 @@ program
       process.exit(1);
     }
 
-    var S = new Scanner(site, options);
-    S.promiseScan(site, options).then(
-    function(reportId) {promiseReport(reportId, options);}).
-    catch(function(err) {
-      logger.error(err);
-      process.exit(1);
-    });
-
+    var scanner = new Scanner(site, options);
+    scanner.promiseScan(site, options)
+      .then(function(reportId) {
+        promiseReport(reportId, options);
+      })
+      .catch(function(err) {
+        logger.error(err);
+        process.exit(1);
+      });
   });
 
 function newHelp() {

@@ -21,7 +21,12 @@
   "devDependencies": {
     "depcheck": "^0.6.4",
     "eslint": "^3.5.0",
-    "fixpack": "^2.3.1"
+    "fixpack": "^2.3.1",
+    "npm-run-all": "^3.1.0",
+    "nsp": "^2.6.1"
+  },
+  "engines": {
+    "node" : ">=6"
   },
   "homepage": "https://github.com/mozilla/observatory-cli#readme",
   "keywords": [
@@ -36,7 +41,13 @@
     "url": "git+https://github.com/mozilla/observatory-cli.git"
   },
   "scripts": {
+    "lint": "npm-run-all lint:*",
+    "lint:depcheck": "depcheck --ignores=nsp",
+    "lint:eslint": "eslint .",
+    "lint:fixpack": "fixpack",
+    "lint:nsp": "nsp check -o summary",
     "prepublish": "npm shrinkwrap",
-    "test": "eslint '**.js' && depcheck && fixpack && echo OK"
+    "pretest": "npm run lint",
+    "test": "echo OK"
   }
 }
