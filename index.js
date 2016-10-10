@@ -64,7 +64,8 @@ var f = {
   warn: chalk.red,
   bold: chalk.bold,
   code: chalk.grey,
-  header: chalk.bold.blue
+  header: chalk.bold.blue,
+  plain: chalk.stripColor
 };
 
 function collect(val, O) {
@@ -238,7 +239,7 @@ function formatAnswersCsv(scores, url, scan, options) {
 
   scoresList.map(function(score) {
     var points = score.score_modifier;
-    var fmt = f.code;
+    var fmt = f.plain;
     if (points > 0) { fmt = f.info; }
     if (points < 0) { fmt = f.error; }
 
