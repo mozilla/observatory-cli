@@ -209,7 +209,7 @@ function promiseReport(scan, options) {
     json: true,
     simple: true
   }).then(function(reportData) {
-    formatAnswer(reportData, url, scan, options);
+    return formatAnswer(reportData, url, scan, options);
   });
 }
 
@@ -450,7 +450,7 @@ program
     var scanner = new Scanner(site, options);
     scanner.promiseScan(site, options)
       .then(function(reportId) {
-        promiseReport(reportId, options);
+        return promiseReport(reportId, options);
       })
       .catch(function(err) {
         logger.error(err);
