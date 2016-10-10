@@ -14,6 +14,8 @@ var util = require("util");
 
 var SITE_URL = "https://observatory.mozilla.org/";
 var API_URL = process.env.HTTPOBS_API_URL || "https://http-observatory.security.mozilla.org/api/v1/";
+if (!API_URL.endsWith("/")) { API_URL += "/" ;}
+
 
 /* utilities and ephemera */
 var clim = require("clim");
