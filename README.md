@@ -22,6 +22,8 @@ The [full report url](https://observatory.mozilla.org/analyze.html?host=ssllabs.
 $ npm install -g observatory-cli
 ```
 
+(There is also a `Dockerfile` for use with `docker-compose`)
+
 ## Usage
 
 1.  **Scan a site** for `https` best practices.
@@ -175,3 +177,16 @@ Full Report Url: https://observatory.mozilla.org/analyze.html?host=some.site
 
 - [HTTP Observatory](https://github.com/mozilla/http-observatory) by April King
 - [Python observatory-cli](https://github.com/mozilla/http-observatory-cli) by April King
+
+
+## Technical / Development
+
+### Debug urls
+
+```
+NODE_DEBUG=request observatory --format report --rescan --zero www.mozilla.org
+```
+
+### API Documentation
+
+https://github.com/mozilla/http-observatory/blob/master/httpobs/docs/api.md
