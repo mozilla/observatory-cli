@@ -1,10 +1,10 @@
 # Observatory by Mozilla CLI Client
 
-## Score your site on its HTTPS practices
+## Score your site's HTTPS practices
 
 Observatory by Mozilla is a project designed to help developers, system administrators, and security professionals configure their sites safely and securely.
 
-## See Observatory in Action!
+## Observatory in action!
 
 - <https://observatory.mozilla.org/>
 - [FAQ](https://observatory.mozilla.org/faq.html)
@@ -22,7 +22,7 @@ The [full report url](https://observatory.mozilla.org/analyze.html?host=ssllabs.
 $ npm install -g observatory-cli
 ```
 
-(There is also a `Dockerfile` for use with `docker-compose`)
+(Optional `Docker` instructions below.)
 
 ## Usage
 
@@ -55,7 +55,7 @@ $ npm install -g observatory-cli
     ```
 
 
-3.  **Show the URL** for the web report.
+3.  **Print the URL** for the expanded online report.
 
     ```
     $ observatory some.site.name --format=url
@@ -65,18 +65,17 @@ $ npm install -g observatory-cli
 
     For `--nagios <failcode>`, `failcode` will be the exit code if the test fails.
 
-    `--min-score`, `--min-grade`, `--zero`, `--skip` aftect the test.
+    `--min-score`, `--min-grade`, `--zero`, `--skip` affect the test.
 
     ```
     $ observatory  --nagios 2 --min-score 85 -z --skip cookies
     CRITICAL ["content-security-policy",...,"x-xss-protection"]
     ```
 
-    If neither `--min-score` nor `--min-grade` is specified, any
-    negative scores fail the test.
+    Any **negative scores fail the test**, unless `--min-score` or `--min-grade` is specified.
 
     ```
-    # '2' means 'critical.'  Exits '2'
+    # '2' maps to nagios 'critical.'  Exits '2'
 
     $ observatory ssllabs.com --nagios 2
     CRITICAL ["redirection"]
@@ -85,7 +84,7 @@ $ npm install -g observatory-cli
     We can `--skip` the failing rule, and affect the score.
 
     ```
-    $ observatory ssllabs.com --nagios     2 --skip redirection
+    $ observatory ssllabs.com --nagios 2 --skip redirection
     observatory [INFO] modfiying score, because of --skip.  was: 100, now: 105
     OK
     ```
@@ -93,16 +92,16 @@ $ npm install -g observatory-cli
     Quiet output with `-q`.
 
     ```
-    $ observatory ssllabs.com --nagios     2 --skip redirection -q
+    $ observatory ssllabs.com --nagios 2 --skip redirection -q
     OK
     ```
 
-## Help
+## Help Ouput
 
 ```
 $ observatory --help
 
-  Usage: index [options] <site>
+  Usage: observatory [options] <site>
 
   cli for interacting with Mozilla HTTP Observatory
 
@@ -125,26 +124,25 @@ $ observatory --help
     -q, --quiet              turns off all logging
 
 
-Formats help:
+  Output Formats (--format)
     - json    json of the report
     - report  plain-text tabular format
     - csv     alias for report
     - url     url for online version
 
 
-Nagios Mode (--nagios)
-  - if `--min-score` and/or `--min-grade`, use those.
-  - else *any* failing rules fail the check.
-  - exits with integer `failcode`.
+  Nagios Mode (--nagios)
+    - if `--min-score` and/or `--min-grade`, use those.
+    - else *any* negative rules fail the check.
+    - exits with integer `failcode`.
 ```
-
 
 ## Example Report, Text Version
 
 Report, with options:
 
 * `-z` to show '0' rules (all rules)
-* `--skip` to skip a rule (affecting SCORE, but not GRADE)
+* `--skip` to skip a rule (affects SCORE, but not GRADE)
 
 ```
 $ observatory some.site --format=report -z --skip redirection
@@ -173,54 +171,9 @@ Full Report Url: https://observatory.mozilla.org/analyze.html?host=some.site
 
 ```
 
-## Dockerized observatory-cli
-Using the provided Dockerfile, observatory-cli can be built and executed in a Docker container.  This
-could be useful for executing observatory-cli in a CI/CD pipeline, one which is ideally capable of running
-containers but doesn't need a lot of extra software.
-
-**To get started,**
-
-1. Build the container, tagging it as mozilla/observatory-cli
-```
-docker build -t mozilla/observatory-cli .
-```
-
-2. Add a section like this to your profile (varies depending on your operating system).  
-```
-## $HOME/.bashrc
-if [[ -d $HOME/.bash_functions ]]; then
-	for file in $HOME/.bash_functions/*; do
-		. $file
-	done
-fi
-```
-
-3. Create the directory referenced in point 2 and copy the files in shell_functions (not bash_completion) into that directory:
-```
-$ mkdir $HOME/.bash_functions
-$ find shell_functions -maxdepth 1 -type f -executable | while read file; do cp $file $HOME/.bash_functions; done
-```
-
-4. *Optional*: Add Bash completion to your shell.  (varies depending on your host operating system)
-```
-## On Red Hat based distributions:
-sudo cp shell_functions/bash_completion/observatory.bash /etc/bash_completion.d/
-```
-
-5. Start a new shell and execute observatory-cli, except now, it's in a Docker container.  Bash completion
-is available if you've added it.
-
-![Screenshot showing use of containerized observatory-cli](docker_example.png)
-
-## Related projects
-
-- [HTTP Observatory](https://github.com/mozilla/http-observatory) by April King
-- [Python observatory-cli](https://github.com/mozilla/http-observatory-cli) by April King
-
-
 ## Technical / Development
 
-### Debug urls
+### Debug observatory api urls
 
 ```
 NODE_DEBUG=request observatory --format report --rescan --zero www.mozilla.org
@@ -229,3 +182,50 @@ NODE_DEBUG=request observatory --format report --rescan --zero www.mozilla.org
 ### API Documentation
 
 https://github.com/mozilla/http-observatory/blob/master/httpobs/docs/api.md
+
+### Dockerized `observatory-cli`
+
+Use the provided [Dockerfile](./Dockerfile), to build and execute `observatory` in Docker container.  Useful for Continuous Integration/Continuous Deployment (CI/CD) pipelines capable of running containers but that otherwise don't need a lot of extra software.
+
+**To get started,**
+
+1. Build the container.  Tag it as `mozilla/observatory-cli`
+
+    ```
+    docker build -t mozilla/observatory-cli .
+    ```
+
+2. Add a section like this to your `profile` (varies depending on your operating system and shell. `bash` shown).
+
+    ```
+    ## $HOME/.bashrc
+    if [[ -d $HOME/.bash_functions ]]; then
+        for file in $HOME/.bash_functions/*; do
+            . $file
+        done
+    fi
+    ```
+
+3. Create the directory referenced in point 2 and copy the files in `shell_functions` (not `bash_completion`) into that directory:
+
+    ```
+    $ mkdir $HOME/.bash_functions
+    $ find shell_functions -maxdepth 1 -type f -executable | while read file; do cp $file $HOME/.bash_functions; done
+    ```
+
+4. *Optional*: Add Bash completion to your shell.  (varies depending on your host operating system)
+
+    ```
+    ## On Red Hat based distributions:
+    sudo cp shell_functions/bash_completion/observatory.bash /etc/bash_completion.d/
+    ```
+
+5. Start a new shell and execute `observatory`.  Now it's in a Docker container.  Bash completion is available if you've added it.
+
+![Screenshot showing use of containerized observatory-cli](docker_example.png)
+
+
+## Related projects
+
+- [HTTP Observatory](https://github.com/mozilla/http-observatory) by April King
+- [Python observatory-cli](https://github.com/mozilla/http-observatory-cli) by April King
