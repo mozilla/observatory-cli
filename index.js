@@ -11,6 +11,7 @@ var rp = require("request-promise");
 var delay = require("timeout-as-promise");
 var sprintf = require("sprintf-js").sprintf;
 var util = require("util");
+var url = require("url");
 
 var SITE_URL = "https://observatory.mozilla.org/";
 var API_URL = process.env.HTTPOBS_API_URL || "https://http-observatory.security.mozilla.org/api/v1/";
@@ -63,7 +64,7 @@ var f = {
   log: chalk.blue,
   warn: chalk.red,
   bold: chalk.bold,
-  code: chalk.grey,
+  code: chalk.bold.grey,
   header: chalk.bold.blue,
   plain: chalk.stripColor
 };
@@ -106,7 +107,7 @@ function validateFormatChoice(given) {
   if (given in FORMATS) {
     return given;
   } else {
-    logger.error("not a valid format choice: %s.  Allowed: ",
+    logger.error("not a valid format choice: %s.  Allowed: %s",
       f.error(given),
       f.code(Object.keys(FORMATS).join("|")));
     process.exit(1);
@@ -124,9 +125,9 @@ class Scanner {
   constructor (site, options) {
     this.attempts = 0;
     this.allowed = options.attempts || 10;
-    this.site = site;
+    this.url = url.resolve(API_URL, "analyze");
   }
-  promiseScan (site, options) {
+  promiseScan (site, options, method="post") {
     var that = this;
     this.attempts += 1;
     site = site || this.site;
@@ -135,38 +136,47 @@ class Scanner {
     if (this.attempts >= this.allowed) {
       throw new Error(sprintf("too many attempts %s", this.attempts));
     }
-    var url = API_URL + "analyze?host=" + site;
-
-    var qargs = {site: site};
+    var qargs = {host: site};
     ["rescan", "zero"].forEach(function(k) {
       if (options[k]) {
         qargs[k] = "true";
       }
     });
-    return rp.post({
-      url: url,
+    // ininitalize with POST
+    return rp({
+      url: this.url,
       json: true,
       simple: true,
-      formData: qargs
+      qs: {host: site},
+      formData: qargs,
+      method: method,
+      timeout: 1000
     }).then(
       function(scan) {
         if (options.rescan && (scan.error === "rescan-attempt-too-soon")) {
           logger.warn("Rescan attempt is sooner than the allowed cooldown period. Returning cached results instead.");
           options.rescan = false;
-          return that.promiseScan(site, options);
+          return that.promiseScan(site, options, "get");
         } else {
           if (scan.error) {
-            throw new Error(scan.error);
+            throw new Error(util.format("Unable to get result. Host:%s Error:%s.", site, scan.error));
           }
         }
-        if (scan.state === "FINISHED") {
-          return scan;
-        } else {
-          logger.warn(sprintf("retrying in 1 second (attempt %s/%s)", that.attempts, that.allowed));
-          return delay(1000).then(function() {
-            return that.promiseScan(site, options);
-          });
+        switch (scan.state) {
+          case "FINISHED": {
+            return scan;
+          }
+          case "ABORTED":
+          case "FAILED": {
+            throw new Error(util.format("Unable to get result from the HTTP Observatory. Host: %s Error: %s.", site, scan.state));
+          }
         }
+
+        // try again
+        logger.warn(sprintf("retrying in 1 second (attempt %s/%s)", that.attempts, that.allowed));
+        return delay(1000).then(function() {
+          return that.promiseScan(site, options, "get");
+        });
       }
     );
   }
@@ -414,7 +424,7 @@ program
   //.command("check <site>")
   .arguments("<site>")
   .option("--format [format]", util.format("format for output.  choice:  (%s).  `json` is default",
-    Object.keys(FORMATS).join("|")),
+    f.code(Object.keys(FORMATS).join("|"))),
     validateFormatChoice)
   .option("--min-grade <grade>", "testing: this grade or better, or exit(1)", validateGrade)
   .option("--min-score <score>", "testing: this score or better, or exit(1)", Number)
@@ -456,7 +466,7 @@ program
         return promiseReport(reportId, options);
       })
       .catch(function(err) {
-        logger.error(err);
+        logger.error(err.message);
         process.exit(1);
       });
   });
@@ -465,7 +475,7 @@ function newHelp() {
   var longest = longestInList(Object.keys(FORMATS));
 
   var out =
-    "\nFormats help:\n" +
+    f.header("\n  Output Formats ") + f.code("(--format)") + "\n" +
 
     Object.keys(FORMATS).map(
       function(k) {
@@ -477,11 +487,11 @@ function newHelp() {
 
     "\n\n" +
 
-    f.header("Nagios Mode") + " " + f.code("(--nagios)") +
+    f.header("  Nagios Mode") + " " + f.code("(--nagios)") +
     "\n" +
-    "  - if `--min-score` and/or `--min-grade`, use those.\n" +
-    "  - else *any* negative rules fail the check.\n" +
-    "  - exits with integer `failcode`.\n";
+    "    - if `--min-score` and/or `--min-grade`, use those.\n" +
+    "    - else *any* negative rules fail the check.\n" +
+    "    - exits with integer `failcode`.\n";
 
   return out;
 }
