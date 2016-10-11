@@ -58,7 +58,7 @@ _observatory_completion () {
       COMPREPLY=( $( compgen -W "${OPTIONS_BLANK}" -- "${CUR}" ) )
       ;;
 		*)
-			if [[ "${CUR}" == -* ]]; then
+			if [[ "${CUR}" == * ]]; then
 				COMPREPLY=( $( compgen -W "${OPTIONS_ALL}" -- "${CUR}" ) )
 			fi
 			return 0

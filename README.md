@@ -173,6 +173,45 @@ Full Report Url: https://observatory.mozilla.org/analyze.html?host=some.site
 
 ```
 
+## Dockerized observatory-cli
+Using the provided Dockerfile, observatory-cli can be built and executed in a Docker container.  This
+could be useful for executing observatory-cli in a CI/CD pipeline, one which is ideally capable of running
+containers but doesn't need a lot of extra software.
+
+**To get started,**
+
+1. Build the container, tagging it as mozilla/observatory-cli
+```
+docker build -t mozilla/observatory-cli .
+```
+
+2. Add a section like this to your profile (varies depending on your operating system).  
+```
+## $HOME/.bashrc
+if [[ -d $HOME/.bash_functions ]]; then
+	for file in $HOME/.bash_functions/*; do
+		. $file
+	done
+fi
+```
+
+3. Create the directory referenced in point 2 and copy the files in shell_functions (not bash_completion) into that directory:
+```
+$ mkdir $HOME/.bash_functions
+$ find shell_functions -maxdepth 1 -type f -executable | while read file; do cp $file $HOME/.bash_functions; done
+```
+
+4. *Optional*: Add Bash completion to your shell.  (varies depending on your host operating system)
+```
+## On Red Hat based distributions:
+sudo cp shell_functions/bash_completion/observatory.bash /etc/bash_completion.d/
+```
+
+5. Start a new shell and execute observatory-cli, except now, it's in a Docker container.  Bash completion
+is available if you've added it.
+
+![Screenshot showing use of containerized observatory-cli](docker_example.png)
+
 ## Related projects
 
 - [HTTP Observatory](https://github.com/mozilla/http-observatory) by April King
