@@ -76,7 +76,7 @@ function collect(val, O) {
 
 function helpAnywhere(rawArgs) {
   return rawArgs.filter(function(x) {
-    return /-h|--help/.exec(x);
+    return /^(-h|--help)$/.exec(x);
   }).length;
 }
 
