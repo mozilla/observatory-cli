@@ -257,7 +257,7 @@ function formatAnswersCsv(scores, url, scan, options) {
     console.log(sprintf("%5f %s  %s.", score.score_modifier, fmt(padright(score.name, longest)), firstSentence));
   });
 
-  var fullReportUrl = "https://observatory.mozilla.org/analyze.html?host=" + options.site;
+  var fullReportUrl = "https://observatory.mozilla.org/analyze/" + options.site;
 
   if (Object.keys(options.skip).length) {
     console.log("\nScore: %s (modified due to --skip)", scan.score);

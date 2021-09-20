@@ -167,7 +167,7 @@ Score Description
 Score: 65 (modified due to --skip)
 Grade: C+
 
-Full Report Url: https://observatory.mozilla.org/analyze.html?host=some.site
+Full Report Url: https://observatory.mozilla.org/analyze/some.site
 
 ```
 
