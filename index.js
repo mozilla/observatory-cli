@@ -173,8 +173,9 @@ class Scanner {
         }
 
         // try again
-        logger.warn(sprintf("retrying in 1 second (attempt %s/%s)", that.attempts, that.allowed));
-        return delay(1000).then(function() {
+        var interval = 1 + Math.ceil(Math.random() * Math.floor(10));
+        logger.warn(sprintf("retrying in %d seconds (attempt %s/%s)", interval, that.attempts, that.allowed));
+        return delay(interval * 1000).then(function() {
           return that.promiseScan(site, options, "get");
         });
       }
